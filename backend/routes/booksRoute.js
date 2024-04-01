@@ -22,7 +22,7 @@ router.post('/', async (request,response)=>{
     }
     catch(error){
         console.log(error.message);
-        console.status(500).send({message:error.message});
+        response.status(500).send({message:error.message});
     }
 });
 
@@ -37,7 +37,7 @@ router.get('/', async (request,response)=>{
     }
     catch(error){
         console.log(error.message);
-        console.status(500).send({message:error.message});
+        response.status(500).send({message:error.message});
     }
 });
 
@@ -51,7 +51,7 @@ router.get('/:id', async (request,response)=>{
     }
     catch(error){
         console.log(error.message);
-        console.status(500).send({message:error.message});
+        response.status(500).send({message:error.message});
     }
 });
 
