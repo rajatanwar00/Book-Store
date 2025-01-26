@@ -3,13 +3,26 @@ import {PORT,mongoDBURL} from "./config.js";
 import mongoose from "mongoose";
 import {Book} from './models/bookModel.js';
 import booksRoute from "./routes/booksRoute.js";
+import userRoute from "./routes/userRoute.js";
 import cors from "cors";
+import { OAuth2Client } from 'google-auth-library';
+import jwt from 'jsonwebtoken';
+import { User } from "./models/userModel.js";
+import bodyParser from "body-parser";
+import authenticateJWT from "./middleware/middleware.js";
 
+const clientID=process.env.CLIENT_ID;
+const client = new OAuth2Client(clientID);
+const SECRET_KEY=process.env.JWT_KEY
 const app=express();
 
-app.use(express.json());
+require('dotenv').config();
 
+
+app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
+app.use(authenticateJWT);
 
 /*
 app.use(cors({
@@ -24,104 +37,67 @@ app.get('/',(request,response)=>{
     return response.status(234).send("Welcome to Book Store");
 });
 
-app.use('/books', booksRoute);
-
-
-/*
-//to save a new book
-app.post('/books', async (request,response)=>{
+app.post('/login',async (request,response)=>{
+    //console.log(request);
+    const googleToken=request.body.authToken;
     try{
-        if(!request.body.title||!request.body.author||!request.body.publishYear){
-            return response.status(400).send({
-                message:'Send all required fields'
-            });
-        }
-        const newBook={
-            title:request.body.title,
-            author:request.body.author,
-            publishYear:request.body.publishYear,
-        };
-
-        const book= await Book.create(newBook);
-        return response.status(201).send(book);
-    }
-    catch(error){
-        console.log(error.message);
-        console.status(500).send({message:error.message});
-    }
-});
-
-//get all books
-app.get('/books', async (request,response)=>{
-    try{
-        const books=await Book.find({});
-        return response.status(200).json({
-            count:books.length,
-            data:books,
-        });
-    }
-    catch(error){
-        console.log(error.message);
-        console.status(500).send({message:error.message});
-    }
-});
-
-//get book by id
-app.get('/books/:id', async (request,response)=>{
-    try{
-        const {id}=request.params;
         
-        const book=await Book.findById(id);
-        return response.status(200).json(book);
+        const ticket=await client.verifyIdToken({
+            idToken:googleToken,
+            audience:clientID
+        });
+
+        const payload = ticket.getPayload();
+        console.log("Payload Fetched");
+        const {name,email,picture,sub}=payload;
+
+        if(payload.aud===clientID&&payload.iss==='https://accounts.google.com'){
+            //store the user in database
+            console.log("Valid Google Token");
+
+            const dbUser=await User.findOne({email}).catch(err=>{
+                                                        console.log("Error while searching user");
+                                                        console.log(err);
+                                                        return ;
+                                                    })
+
+            if(!dbUser){
+                console.log("Creating new user -> ", name);
+
+                const newUser={
+                    name,email,picture,subId:sub
+                }
+                await User.create(newUser)
+                    .catch(err=>{
+                        console.log("Error while creating new user");
+                        console.log(err);
+                        return ;
+                    })
+            }
+            else{
+                console.log("User already exists -> ",name);
+            }
+
+        }
+        else{
+            //throw error
+            console.log("Invalid Google Token");
+            res.status(401).json({message:"Unauthorised Login Attempt"});
+        }
+
+        const serverToken=jwt.sign({name,email,picture,sub},SECRET_KEY,{expiresIn:'1d'});
+
+        response.status(200).json({serverToken,message:"Authentication Successful"});
     }
     catch(error){
-        console.log(error.message);
-        console.status(500).send({message:error.message});
+        console.log("GoogleToken Handling Error,", error);
+        response.status(401).json({ error: 'Invalid ID token' });
     }
 });
 
-//update book
-app.put('/books/:id', async (request,response)=>{
-    try{
-        if(!request.body.title||!request.body.author||!request.body.publishYear){
-            return response.status(400).send({
-                message:'Send all required fields'
-            });
-        }
+app.use('/books', booksRoute);
+app.use('/user', userRoute);
 
-        const {id}=request.params;
-        const result=await Book.findByIdAndUpdate(id,request.body);
-
-        if(!result){
-            return response.status(404).json({message:'Book not found'});
-        }
-
-        return response.status(200).send({message:'Book updated successfully'});
-    }
-    catch(error){
-        console.log(error.message);
-        console.status(500).send({message:error.message});
-    }
-});
-
-//delete a book
-app.delete('/books/:id',async (request,response)=>{
-    try{
-        const {id}=request.params;
-        const result=await Book.findByIdAndDelete(id);
-
-        if(!result){
-            return response.status(404).json({message:'Book not found'});
-        }
-
-        return response.status(200).send({message:'Book updated successfully'});        
-    }
-    catch(error){
-        console.log(error.message);
-        console.status(500).send({message:error.message});
-    }
-});
-*/
 
 mongoose
     .connect(mongoDBURL)
