@@ -5,6 +5,8 @@ import axios from 'axios';
 import {useNavigate,useParams} from 'react-router-dom';
 import {useSnackbar} from 'notistack';
 
+const backendURL=process.env.REACT_APP_BACKENDURL;
+
 const DeleteBook = () => {
   const [loading, setLoading]=useState(false);
   const navigate=useNavigate();
@@ -14,7 +16,7 @@ const DeleteBook = () => {
   const handleDeleteBook=()=>{
     setLoading(true);
     axios
-      .delete(`https://book-store-git-main-rajatanwar00s-projects.vercel.app/books/${id}`)
+      .delete(`${backendURL}/books/${id}`)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Book Deleted Successfully',{variant:'success'});

@@ -4,6 +4,8 @@ import {useParams} from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Spinner from '../components/Spinner';
 
+const backendURL=process.env.REACT_APP_BACKENDURL;
+
 
 const ShowBook = () => {
   const [book,setBook]=useState({});
@@ -13,7 +15,7 @@ const ShowBook = () => {
   useEffect(()=>{
     setLoading(true);
     axios
-      .get(`https://book-store-git-main-rajatanwar00s-projects.vercel.app/books/${id}`)
+      .get(`${backendURL}/books/${id}`)
       .then((response) => {
         setBook(response.data);
         setLoading(false);

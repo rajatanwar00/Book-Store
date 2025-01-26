@@ -5,6 +5,8 @@ import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import {useSnackbar} from 'notistack';
 
+const backendURL=process.env.REACT_APP_BACKENDURL;
+
 const CreateBooks = () => {
   const [title,setTitle]=useState('');
   const [author,setAuthor]=useState('');
@@ -21,7 +23,7 @@ const CreateBooks = () => {
     };
     setLoading(true);
     axios
-      .post('https://book-store-git-main-rajatanwar00s-projects.vercel.app/books',data)
+      .post(`${backendURL}/books`,data)
       .then(()=>{
         setLoading(false);
         enqueueSnackbar('Book Created Successfully',{variant:'success'});

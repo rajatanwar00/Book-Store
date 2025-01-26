@@ -5,6 +5,8 @@ import axios from 'axios';
 import {useNavigate,useParams} from 'react-router-dom';
 import {useSnackbar} from 'notistack';
 
+const backendURL=process.env.REACT_APP_BACKENDURL;
+
 const EditBook = () => {
   const [title,setTitle]=useState('');
   const [author,setAuthor]=useState('');
@@ -16,7 +18,7 @@ const EditBook = () => {
   useEffect(()=>{
     setLoading(true);
     axios
-      .get(`https://book-store-git-main-rajatanwar00s-projects.vercel.app/books/${id}`)
+      .get(`${backendURL}/books/${id}`)
       .then((response)=>{
         setAuthor(response.data.author);
         setTitle(response.data.title);
@@ -37,7 +39,7 @@ const EditBook = () => {
     };
     setLoading(true);
     axios
-      .put(`https://book-store-git-main-rajatanwar00s-projects.vercel.app/books/${id}`,data)
+      .put(`${backendURL}/books/${id}`,data)
       .then(()=>{
         setLoading(false);
         enqueueSnackbar('Book Edited Successfully',{variant:'success'});
