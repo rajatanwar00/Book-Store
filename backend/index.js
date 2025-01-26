@@ -1,5 +1,4 @@
 import express from "express";
-import {PORT,mongoDBURL} from "./config.js";
 import mongoose from "mongoose";
 import {Book} from './models/bookModel.js';
 import booksRoute from "./routes/booksRoute.js";
@@ -14,6 +13,8 @@ import authenticateJWT from "./middleware/middleware.js";
 const clientID=process.env.CLIENT_ID;
 const client = new OAuth2Client(clientID);
 const SECRET_KEY=process.env.JWT_KEY
+const PORT=process.env.PORT;
+const mongoDBURL=process.env.DB_URL;
 const app=express();
 
 require('dotenv').config();
