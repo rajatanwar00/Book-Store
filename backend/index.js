@@ -9,6 +9,9 @@ import jwt from 'jsonwebtoken';
 import { User } from "./models/userModel.js";
 import bodyParser from "body-parser";
 import authenticateJWT from "./middleware/middleware.js";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const clientID=process.env.CLIENT_ID;
 const client = new OAuth2Client(clientID);
@@ -16,9 +19,6 @@ const SECRET_KEY=process.env.JWT_KEY
 const PORT=process.env.PORT;
 const mongoDBURL=process.env.DB_URL;
 const app=express();
-
-require('dotenv').config();
-
 
 app.use(express.json());
 app.use(cors());
