@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const gID=import.meta.env.VITE_GID;
 const backendURL=import.meta.env.VITE_BACKEND_URL;
 
-console.log(gID,backendURL)
+
 
 function Login() {
     const navigate=useNavigate();
