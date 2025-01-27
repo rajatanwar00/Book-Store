@@ -14,8 +14,12 @@ const ShowBook = () => {
 
   useEffect(()=>{
     setLoading(true);
-    axios
-      .get(`${backendURL}/books/${id}`)
+    const token=localStorage.getItem('jwtToken');
+    axios.get(`${backendURL}/books/${id}`,{
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
+    })
       .then((response) => {
         setBook(response.data);
         setLoading(false);

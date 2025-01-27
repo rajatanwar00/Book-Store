@@ -17,8 +17,12 @@ const EditBook = () => {
   const {enqueueSnackbar}=useSnackbar();
   useEffect(()=>{
     setLoading(true);
-    axios
-      .get(`${backendURL}/books/${id}`)
+    const token=localStorage.getItem('jwtToken');
+    axios.get(`${backendURL}/books/${id}`,{
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
+    })
       .then((response)=>{
         setAuthor(response.data.author);
         setTitle(response.data.title);

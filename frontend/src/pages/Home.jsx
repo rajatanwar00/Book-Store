@@ -25,8 +25,12 @@ const Home = () => {
     }
     //if exists
     setLoading(true);
-    axios
-      .get(`${backendURL}/books`)
+    const token=localStorage.getItem('jwtToken');
+    axios.get(`${backendURL}/books`,{
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
+    })
       .then((response) => {
         setBooks(response.data.data);
         setLoading(false);

@@ -22,8 +22,13 @@ const CreateBooks = () => {
       publishYear,
     };
     setLoading(true);
+    const token=localStorage.getItem('jwtToken');
     axios
-      .post(`${backendURL}/books`,data)
+      .post(`${backendURL}/books`,data,{
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
+    })
       .then(()=>{
         setLoading(false);
         enqueueSnackbar('Book Created Successfully',{variant:'success'});
