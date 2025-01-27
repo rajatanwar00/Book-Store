@@ -9,7 +9,7 @@ import BooksTable from '../components/home/BooksTable';
 import BooksCard from '../components/home/BooksCard';
 import Header from '../components/home/Header';
 
-const backendURL=process.env.REACT_APP_BACKENDURL;
+const backendURL=import.meta.env.VITE_BACKEND_URL;
 
 
 const Home = () => {

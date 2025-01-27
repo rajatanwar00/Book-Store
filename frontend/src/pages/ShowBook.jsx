@@ -4,7 +4,7 @@ import {useParams} from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Spinner from '../components/Spinner';
 
-const backendURL=process.env.REACT_APP_BACKENDURL;
+const backendURL=import.meta.env.VITE_BACKEND_URL;
 
 
 const ShowBook = () => {

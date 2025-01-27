@@ -5,8 +5,8 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { TypeAnimation } from 'react-type-animation';
 import { useNavigate } from 'react-router-dom';
 
-const gID='512636945660-2sc2dvrbsb2eujm8as9aso1ettge8bsr.apps.googleusercontent.com';
-const backendURL=process.env.REACT_APP_BACKENDURL;
+const gID=import.meta.env.VITE_GID;
+const backendURL=import.meta.env.VITE_BACKEND_URL;
 
 function Login() {
     const navigate=useNavigate();
